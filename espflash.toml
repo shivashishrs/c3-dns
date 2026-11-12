@@ -1,0 +1,12 @@
+# Read by espflash from the current directory; tools/flash-*.sh run espflash from the repo root.
+# Without this, espflash writes its own default partition table (no storage/blocklist).
+[idf]
+partition_table = "firmware/partitions.csv"
+
+[flash]
+size = "4MB"
+# espflash's bundled bootloader otherwise runs the flash at 40 MHz. Code executes from flash
+# through a small cache, so this halves the cost of every cache miss on the DNS path
+# (Task 6 measured ~0.4 ms just to parse a query at 40 MHz). DIO works on every C3 module.
+mode = "dio"
+frequency = "80MHz"

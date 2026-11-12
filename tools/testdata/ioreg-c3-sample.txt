@@ -1,0 +1,179 @@
++-o USB JTAG/serial debug unit@00100000  <class IOUSBHostDevice, id 0x100023066, registered, matched, active, busy 0 (214 ms), retain 37>
+  | {
+  |   "kUSBSerialNumberString" = "02:00:00:00:00:02"
+  |   "bDeviceClass" = 239
+  |   "UsbLinkSpeed" = 12000000
+  |   "bDeviceSubClass" = 2
+  |   "iSerialNumber" = 3
+  |   "IOServiceDEXTEntitlements" = (("com.apple.developer.driverkit.transport.usb"))
+  |   "iProduct" = 2
+  |   "USB Serial Number" = "02:00:00:00:00:02"
+  |   "USB Vendor Name" = "Espressif"
+  |   "USBSpeed" = 1
+  |   "IOPowerManagement" = {"PowerOverrideOn"=Yes,"DevicePowerState"=2,"CurrentPowerState"=2,"CapabilityFlags"=32768,"MaxPowerState"=2,"DriverPowerState"=0}
+  |   "bNumConfigurations" = 1
+  |   "kUSBProductString" = "USB JTAG/serial debug unit"
+  |   "kUSBVendorString" = "Espressif"
+  |   "USB Product Name" = "USB JTAG_serial debug unit"
+  |   "iManufacturer" = 1
+  |   "idVendor" = 12346
+  |   "Device Speed" = 1
+  |   "kUSBCurrentConfiguration" = 1
+  |   "idProduct" = 4097
+  |   "bcdDevice" = 257
+  |   "UsbDeviceSignature" = <3a300110010145383a46363a30413a34463a31413a4443ef02010202000a0200ffff01>
+  |   "sessionID" = 3001464013373
+  |   "USB Address" = 1
+  |   "IOCFPlugInTypes" = {"9dc7b780-9ec0-11d4-a54f-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+  |   "USBPortType" = 5
+  |   "UsbDeviceFunction" = 7
+  |   "bDeviceProtocol" = 1
+  |   "locationID" = 1048576
+  |   "kUSBAddress" = 1
+  |   "bcdUSB" = 512
+  |   "UsbPowerSinkAllocation" = 500
+  |   "bMaxPacketSize0" = 64
+  | }
+  | 
+  +-o AppleUSBCDCCompositeDevice  <class AppleUSBCDCCompositeDevice, id 0x10002306c, !registered, !matched, active, busy 0, retain 4>
+  |   {
+  |     "IOClass" = "AppleUSBCDCCompositeDevice"
+  |     "CFBundleIdentifier" = "com.apple.driver.usb.cdc"
+  |     "IOProviderClass" = "IOUSBHostDevice"
+  |     "IOProbeScore" = 60000
+  |     "IOMatchedAtBoot" = Yes
+  |     "IOMatchCategory" = "IODefaultMatchCategory"
+  |     "IOMatchDefer" = Yes
+  |     "bDeviceSubClass" = 2
+  |     "IOPersonalityPublisher" = "com.apple.driver.usb.cdc"
+  |     "bDeviceProtocol" = 1
+  |     "CFBundleIdentifierKernel" = "com.apple.driver.usb.cdc"
+  |     "IOPrimaryDriverTerminateOptions" = Yes
+  |     "bDeviceClass" = 239
+  |   }
+  |   
+  +-o IOUSBHostInterface@0  <class IOUSBHostInterface, id 0x10002306e, registered, matched, active, busy 0 (6 ms), retain 10>
+  | | {
+  | |   "USBSpeed" = 1
+  | |   "iInterface" = 0
+  | |   "bInterfaceProtocol" = 0
+  | |   "bAlternateSetting" = 0
+  | |   "idProduct" = 4097
+  | |   "bcdDevice" = 257
+  | |   "USB Product Name" = "USB JTAG/serial debug unit"
+  | |   "locationID" = 1048576
+  | |   "bInterfaceClass" = 2
+  | |   "bInterfaceSubClass" = 2
+  | |   "IOCFPlugInTypes" = {"2d9786c6-9ef3-11d4-ad51-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+  | |   "UsbExclusiveOwner" = "AppleUSBACMControl"
+  | |   "USBPortType" = 5
+  | |   "bConfigurationValue" = 1
+  | |   "bInterfaceNumber" = 0
+  | |   "USB Vendor Name" = "Espressif"
+  | |   "IOServiceDEXTEntitlements" = (("com.apple.developer.driverkit.transport.usb"))
+  | |   "idVendor" = 12346
+  | |   "bNumEndpoints" = 1
+  | |   "USB Serial Number" = "02:00:00:00:00:02"
+  | | }
+  | | 
+  | +-o AppleUSBACMControl  <class AppleUSBACMControl, id 0x100023075, registered, matched, active, busy 0 (0 ms), retain 7>
+  |     {
+  |       "IOClass" = "AppleUSBACMControl"
+  |       "CFBundleIdentifier" = "com.apple.driver.usb.cdc.acm"
+  |       "IOProviderClass" = "IOUSBHostInterface"
+  |       "IOProbeScore" = 60000
+  |       "bInterfaceSubClass" = 2
+  |       "IOMatchedAtBoot" = Yes
+  |       "IOMatchCategory" = "IODefaultMatchCategory"
+  |       "IOMatchDefer" = Yes
+  |       "InterruptPipeReturn" = 0
+  |       "IOPersonalityPublisher" = "com.apple.driver.usb.cdc.acm"
+  |       "bInterfaceProtocol" = 0
+  |       "CFBundleIdentifierKernel" = "com.apple.driver.usb.cdc.acm"
+  |       "bInterfaceClass" = 2
+  |     }
+  |     
+  +-o IOUSBHostInterface@1  <class IOUSBHostInterface, id 0x10002306f, registered, matched, active, busy 0 (209 ms), retain 8>
+  | | {
+  | |   "USBSpeed" = 1
+  | |   "iInterface" = 0
+  | |   "bInterfaceProtocol" = 0
+  | |   "bAlternateSetting" = 0
+  | |   "idProduct" = 4097
+  | |   "bcdDevice" = 257
+  | |   "USB Product Name" = "USB JTAG/serial debug unit"
+  | |   "locationID" = 1048576
+  | |   "Product Name" = "USB JTAG/serial debug unit"
+  | |   "bInterfaceClass" = 10
+  | |   "bInterfaceSubClass" = 2
+  | |   "IOCFPlugInTypes" = {"2d9786c6-9ef3-11d4-ad51-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+  | |   "USBPortType" = 5
+  | |   "bConfigurationValue" = 1
+  | |   "bInterfaceNumber" = 1
+  | |   "USB Vendor Name" = "Espressif"
+  | |   "IOServiceDEXTEntitlements" = (("com.apple.developer.driverkit.transport.usb"))
+  | |   "idVendor" = 12346
+  | |   "bNumEndpoints" = 2
+  | |   "USB Serial Number" = "02:00:00:00:00:02"
+  | | }
+  | | 
+  | +-o AppleUSBACMData  <class AppleUSBACMData, id 0x100023076, registered, matched, active, busy 0 (2 ms), retain 7>
+  |   | {
+  |   |   "IOClass" = "AppleUSBACMData"
+  |   |   "CFBundleIdentifier" = "com.apple.driver.usb.cdc.acm"
+  |   |   "IOProviderClass" = "IOUSBHostInterface"
+  |   |   "IOTTYBaseName" = "usbmodem"
+  |   |   "idProduct" = 4097
+  |   |   "IOProbeScore" = 49998
+  |   |   "bInterfaceSubClass" = 2
+  |   |   "IOMatchedAtBoot" = Yes
+  |   |   "IOMatchCategory" = "IODefaultMatchCategory"
+  |   |   "IOPersonalityPublisher" = "com.apple.driver.usb.cdc.acm"
+  |   |   "idVendor" = 12346
+  |   |   "CFBundleIdentifierKernel" = "com.apple.driver.usb.cdc.acm"
+  |   |   "IOTTYSuffix" = "101"
+  |   |   "bInterfaceClass" = 10
+  |   | }
+  |   | 
+  |   +-o IOSerialBSDClient  <class IOSerialBSDClient, id 0x10002307b, registered, matched, active, busy 0 (1 ms), retain 5>
+  |       {
+  |         "IOClass" = "IOSerialBSDClient"
+  |         "CFBundleIdentifier" = "com.apple.iokit.IOSerialFamily"
+  |         "IOProviderClass" = "IOSerialStreamSync"
+  |         "IOTTYBaseName" = "usbmodem"
+  |         "IOSerialBSDClientType" = "IOSerialStream"
+  |         "IOProbeScore" = 1000
+  |         "IOResourceMatch" = "IOBSD"
+  |         "IOMatchedAtBoot" = Yes
+  |         "IOMatchCategory" = "IODefaultMatchCategory"
+  |         "IOTTYDevice" = "usbmodem101"
+  |         "IOCalloutDevice" = "/dev/cu.usbmodem101"
+  |         "IODialinDevice" = "/dev/tty.usbmodem101"
+  |         "IOPersonalityPublisher" = "com.apple.iokit.IOSerialFamily"
+  |         "CFBundleIdentifierKernel" = "com.apple.iokit.IOSerialFamily"
+  |         "IOTTYSuffix" = "101"
+  |       }
+  |       
+  +-o IOUSBHostInterface@2  <class IOUSBHostInterface, id 0x100023070, registered, matched, active, busy 0 (4 ms), retain 5>
+  |   {
+  |     "USBPortType" = 5
+  |     "IOCFPlugInTypes" = {"2d9786c6-9ef3-11d4-ad51-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+  |     "USB Vendor Name" = "Espressif"
+  |     "USB Serial Number" = "02:00:00:00:00:02"
+  |     "bcdDevice" = 257
+  |     "USBSpeed" = 1
+  |     "idProduct" = 4097
+  |     "IOServiceDEXTEntitlements" = (("com.apple.developer.driverkit.transport.usb"))
+  |     "bInterfaceSubClass" = 255
+  |     "bConfigurationValue" = 1
+  |     "locationID" = 1048576
+  |     "USB Product Name" = "USB JTAG/serial debug unit"
+  |     "bInterfaceProtocol" = 1
+  |     "iInterface" = 0
+  |     "bAlternateSetting" = 0
+  |     "idVendor" = 12346
+  |     "bInterfaceNumber" = 2
+  |     "bInterfaceClass" = 255
+  |     "bNumEndpoints" = 2
+  |   }
+  |   

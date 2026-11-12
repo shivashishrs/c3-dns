@@ -1,0 +1,9 @@
+target/
+.embuild
+firmware/cfg.toml
+tools/board.env
+*.bin
+!tools/testdata/*.bin
+soak-*.csv
+dist/
+.DS_Store

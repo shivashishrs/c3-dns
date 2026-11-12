@@ -1,0 +1,54 @@
+[package]
+name = "firmware"
+version = "0.1.0"
+edition = "2021"
+description = "C3-DNS firmware: a network-wide DNS ad blocker for the ESP32-C3"
+license = "MIT"
+repository = "https://github.com/shivashishrs/c3-dns"
+publish = false
+resolver = "2"
+rust-version = "1.82"
+
+[[bin]]
+name = "firmware"
+harness = false # do not use the built-in cargo test harness -> resolve rust-analyzer errors
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true    # Symbols are nice, and they don't increase the size on Flash
+opt-level = "z"
+
+# From the esp-idf-template: the esp-idf-* crates are taken from the esp-rs/esp-idf monorepo.
+[patch.crates-io]
+esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf.git" }
+esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf.git" }
+esp-idf-svc = { git = "https://github.com/esp-rs/esp-idf.git" }
+
+[features]
+# Debug-only HTTP hooks (LAN-restricted, unauthenticated), listed in src/debug.rs.
+# Never part of the default build. Used to verify the device paths on the spare.
+debug-hooks = []
+# DEVELOPMENT ONLY: when NVS holds no Wi-Fi setting, seed it from the gitignored cfg.toml
+# compiled into this build (an existing setting is never overwritten). Never in the default
+# build: a released binary carries no credentials and is provisioned through the portal.
+dev-wifi = ["dep:toml-cfg"]
+
+[dependencies]
+dnscore = { path = "../dnscore" }
+log = "0.4"
+anyhow = "1"
+toml-cfg = { version = "0.2", optional = true }
+esp-idf-svc = { version = "0.53", features = ["critical-section"] }
+
+[build-dependencies]
+embuild = "0.33.5"
+# Build-time only (the UI page): gzip, and SHA-256/base64 for its CSP hashes and ETag.
+flate2 = "1"
+sha2 = "0.10"
+base64 = "0.22"
+
+# mDNS is a managed component in ESP-IDF 5.x.
+[[package.metadata.esp-idf-sys.extra_components]]
+remote_component = { name = "espressif/mdns", version = "1.2" }

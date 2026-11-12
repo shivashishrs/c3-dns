@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C3-DNS Installer</title>
+<meta name="description" content="Install C3-DNS, a network-wide DNS ad blocker, on an ESP32-C3 from your browser. No toolchain needed.">
+<script type="module" src="https://unpkg.com/esp-web-tools@10.4.0/dist/web/install-button.js?module"></script>
+<style>
+:root{--bg:#f7f7f4;--card:#fff;--ink:#1d1f1c;--mu:#5d625a;--ln:#e2e3dd;--ac:#1f7a4d;--acink:#fff;--warn:#8a5a00;--code:#eef0ea}
+@media (prefers-color-scheme:dark){:root{--bg:#141614;--card:#1c1f1c;--ink:#e8eae4;--mu:#a3a89f;--ln:#2e322d;--ac:#4cc287;--acink:#08130d;--warn:#e0b25a;--code:#262a25}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:40px 16px 64px}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}
+.lead{color:var(--mu);font-size:18px;margin:0 0 28px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:24px;margin:0 0 20px}
+h2{font-size:18px;margin:0 0 12px}
+ol{margin:0;padding-left:22px}
+li{margin:0 0 10px}
+code{background:var(--code);border-radius:5px;padding:1px 6px;font-size:.92em}
+.mu{color:var(--mu)}
+.warn{color:var(--warn)}
+esp-web-install-button{display:inline-block;margin:6px 0 12px}
+esp-web-install-button button,.btn{background:var(--ac);color:var(--acink);border:0;border-radius:10px;padding:12px 22px;font:inherit;font-weight:650;cursor:pointer}
+a{color:var(--ac)}
+footer{color:var(--mu);font-size:14px;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>C3-DNS installer</h1>
+<p class="lead">A network-wide DNS ad blocker for the ESP32-C3. Plug in the board, press Install, then set it up from your phone.</p>
+
+<section class="card">
+<h2>1. Install</h2>
+<p>Connect an ESP32-C3 board with 4&nbsp;MB flash by USB, then:</p>
+<esp-web-install-button manifest="manifest.json">
+  <button slot="activate">Install C3-DNS</button>
+  <span slot="unsupported"><b class="warn">This browser cannot talk to USB devices.</b> Use Chrome or Edge on a desktop or laptop (Windows, macOS, Linux).</span>
+  <span slot="not-allowed"><b class="warn">USB access needs HTTPS or localhost.</b></span>
+</esp-web-install-button>
+<p class="mu">First install: choose <b>Erase device</b> when asked. Updating later without erasing keeps your Wi-Fi, password and rules.</p>
+<p class="mu">No port in the list? Hold the board's <b>BOOT</b> button while plugging it in, then try again. On Linux, add yourself to the <code>dialout</code> group.</p>
+</section>
+
+<section class="card">
+<h2>2. Set it up</h2>
+<ol>
+<li>On a phone or laptop, join the open Wi-Fi network <b>C3-DNS-XXXX</b> that the board starts.</li>
+<li>Most phones open the setup page by themselves; if yours does not, open <code>http://192.168.4.1/</code>.</li>
+<li>Choose your home Wi-Fi and an admin password (12+ characters). The board restarts and joins your network.</li>
+</ol>
+<p class="mu">The setup network closes after 15 minutes. Hold BOOT for 5 seconds to start over.</p>
+</section>
+
+<section class="card">
+<h2>3. Use it</h2>
+<ol>
+<li>Open <code>http://adblock.local/</code> (or the board's address from your router) and sign in as <code>admin</code>.</li>
+<li>In your router's DHCP settings, set the board's address as the DNS server. Give the board a fixed address (DHCP reservation) first.</li>
+<li>Test from any device: <code>nslookup doubleclick.net &lt;board-ip&gt;</code> should answer <code>0.0.0.0</code>.</li>
+</ol>
+</section>
+
+<footer>
+Source, docs and issues: <a href="https://github.com/shivashishrs/c3-dns">github.com/shivashishrs/c3-dns</a> · MIT licence.
+The bundled blocklist is <a href="https://github.com/StevenBlack/hosts">StevenBlack/hosts</a> (MIT).
+Installer by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# v3 flash map, 4 MB, no OTA, nothing left empty.
+# storage and blocklist hold our own raw formats; subtype `undefined` (0x06) because
+# espflash 4.6 cannot parse custom numeric data subtypes such as 0x40.
+# Name,     Type, SubType,   Offset,   Size,     Flags
+nvs,        data, nvs,       0x9000,   0x6000,
+phy_init,   data, phy,       0xf000,   0x1000,
+factory,    app,  factory,   0x10000,  0x180000,
+storage,    data, undefined, 0x190000, 0x80000,
+blocklist,  data, undefined, 0x210000, 0x1F0000,

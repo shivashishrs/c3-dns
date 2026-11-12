@@ -1,0 +1,57 @@
+# Rust often needs a bit of an extra main task stack size compared to C (the default is 3K)
+# You might have to increase this further if you allocate large stack variables in the main task
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# Increase a bit these stack sizes as they are also a bit too small by default
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+CONFIG_FREERTOS_IDLE_TASK_STACKSIZE=4096
+
+# You might have to increase this further if you spawn your own Rust threads 
+# that allocate large stack variables; or better yet - use 
+# `std::thread::Builder::new().stack_size(XXX)` for spawning
+CONFIG_PTHREAD_TASK_STACK_SIZE_DEFAULT=4096
+
+# 4 MB flash with the v3 custom partition table (firmware/partitions.csv).
+# The filename is resolved from the generated CMake project in
+# target/riscv32imc-esp-espidf/<profile>/build/esp-idf-sys-<hash>/out, hence the ../ chain
+# (breaks if CARGO_TARGET_DIR moves target/).
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="../../../../../../partitions.csv"
+
+# HTTP server URI handlers need more than the default stack once Rust closures are involved.
+CONFIG_HTTPD_STACK_SIZE=6144
+
+# Task 6: DNS server.
+# IPv6 SLAAC (global address from router advertisements); link-local is created at connect.
+CONFIG_LWIP_IPV6_AUTOCONFIG=y
+# Burst handling (spike: 200 queries at once -> sendto ENOMEM; UDP receive queue of 6).
+# Measured on the spare (Task 6): lwIP received every packet of a burst but the socket's
+# receive mailbox overflowed silently; the fix is mainly the priority-19 receiver task in
+# dns.rs, which copies each query into a small buffer at once and frees the Wi-Fi frame.
+# Queued frames hold heap, so the queues stay moderate (a first try with deeper lwIP/Wi-Fi
+# queues took free heap down to ~0.5 KB in a burst). The tcpip mailbox stays at its default.
+# 32 also guarantees that the upstream socket can hold a reply for every pending query (<= 32).
+CONFIG_LWIP_UDP_RECVMBOX_SIZE=32
+# Fewer Wi-Fi TX buffers than the default 32: in bursts the TX path saturates anyway (replies
+# are retried with backoff); measured +9 KB minimum free heap in a 200-query burst.
+CONFIG_ESP_WIFI_DYNAMIC_TX_BUFFER_NUM=16
+# Socket calls run in the calling task under the lwIP core lock instead of a message round
+# trip through the tcpip task (measured: sendto ~2.1 ms per reply without it).
+CONFIG_LWIP_TCPIP_CORE_LOCKING=y
+# Sockets: DNS UDP + TCP listener + 4 TCP clients + upstream UDP + upstream TCP retries,
+# plus the HTTP server's listener, clients and control socket.
+CONFIG_LWIP_MAX_SOCKETS=16
+# Fix 1 (review: heap floor under a query flood). Every queued Wi-Fi frame pins a dynamic RX
+# buffer (~1.6 KB) until the app reads it; with the default 32 a flood of upstream-miss
+# queries took free heap to 6 KB (16: 19 KB; 8: 30 KB, and 37.7 KB with the 52 KB low-heap
+# guard in dns.rs). Capping them bounds what the network stack can hold (excess frames are
+# dropped by the driver, like any lossy link; clients retry). Halving the TX buffers did not
+# help (measured), so they stay at 16.
+CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=8
+# Task 9 (web UI): a TCP connection may hold at most this much unacknowledged reply data. The
+# default (5760) let one streamed /api/log reply pin ~14 KB (lwIP segments plus their Wi-Fi TX
+# copies) however small the chunks we write; 2 x MSS bounds that per connection. DNS-over-TCP
+# replies (<= 1232 + 2 bytes in practice) and upstream TCP queries are unaffected in size, the
+# writer just waits for ACKs sooner. Measured on the spare: see the Task 9 report.
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=2880

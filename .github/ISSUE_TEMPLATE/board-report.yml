@@ -1,0 +1,40 @@
+name: Board report
+description: Tell us C3-DNS works (or not) on your board
+labels: [board-report]
+body:
+  - type: input
+    id: board
+    attributes:
+      label: Board
+      description: Name, seller link or photo, flash size
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: C3-DNS version
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Works
+        - Works with problems (describe below)
+        - Does not work
+    validations:
+      required: true
+  - type: checkboxes
+    id: checked
+    attributes:
+      label: What did you check?
+      options:
+        - label: Web installer flashed it
+        - label: Setup portal appeared and joined my Wi-Fi
+        - label: Ads blocked after pointing DNS at it
+        - label: Holding BOOT for 5 s restarted into the setup portal
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes

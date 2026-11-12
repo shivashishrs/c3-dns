@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>C3-DNS</title>
+<style>
+:root{--bg:#f3f5f3;--sf:#fff;--ink:#1d2320;--mu:#5c6661;--ln:#d8ddd9;--ac:#17647f;--acw:#e3eff3;--ok:#2b7a4b;--okw:#e4f2e9;--bad:#b0271f;--badw:#fbe8e6;--warn:#8a5a00;--warnw:#fff3d6;--r:6px}
+@media (prefers-color-scheme:dark){:root{--bg:#121614;--sf:#1a1f1c;--ink:#e3e8e5;--mu:#9aa49f;--ln:#2e3632;--ac:#62b4d4;--acw:#16313b;--ok:#6cc690;--okw:#173323;--bad:#f2877d;--badw:#3d1c19;--warn:#f0c062;--warnw:#3a2d10}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 0 6px}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.01em}
+header .host{color:var(--mu);font-size:14px}
+header .sp{flex:1}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--ln);overflow-x:auto;margin-bottom:22px}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mu);font:inherit;padding:10px 12px 9px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ac);font-weight:600}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.btn{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:6px 12px;cursor:pointer;min-height:34px}
+.btn:hover{border-color:var(--mu)}
+.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--sf);font-weight:600}
+.btn.dng{color:var(--bad)}
+.btn.sm{padding:2px 9px;min-height:28px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+input[type=text],input[type=password],input[type=number],textarea{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:6px 9px;min-height:34px;width:100%}
+label{display:block;font-size:13px;color:var(--mu);margin:0 0 4px}
+h2{font-size:15px;margin:30px 0 10px;font-weight:650}
+.mu{color:var(--mu)}.small{font-size:13px}
+.state{display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap;padding:6px 0 18px;border-bottom:1px solid var(--ln)}
+.state .big{font-size:30px;line-height:1.15;font-weight:700;letter-spacing:-.01em;flex:1 1 280px}
+.state .big .dot{display:inline-block;width:.42em;height:.42em;border-radius:50%;background:var(--ok);vertical-align:.18em;margin-right:.32em}
+.state.paused .big .dot{background:var(--warn)}
+.state .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:16px 20px;margin:20px 0 6px}
+.stats div b{display:block;font-size:22px;font-weight:650;line-height:1.2}
+.stats div span{font-size:13px;color:var(--mu)}
+.v-ok{color:var(--ok)}.v-bad{color:var(--bad)}
+.meter{height:6px;background:var(--ln);border-radius:3px;overflow:hidden;margin-top:6px;max-width:420px}
+.meter i{display:block;height:100%;background:var(--ac)}
+.meter.full i{background:var(--bad)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+.cols>div,ol.rank li>*,.stats>div{min-width:0}
+@media (max-width:700px){.cols{grid-template-columns:1fr}.state .big{font-size:25px}}
+ol.rank{list-style:none;margin:0;padding:0}
+ol.rank li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:6px 0;border-bottom:1px solid var(--ln)}
+ol.rank li a{overflow-wrap:anywhere;color:inherit;text-decoration:none;cursor:pointer}
+ol.rank li a:hover{text-decoration:underline}
+ol.rank .bar{grid-column:1/3;height:3px;border-radius:2px;background:var(--ok);opacity:.55}
+ol.rank.bad .bar{background:var(--bad)}
+.tag{display:inline-block;border-radius:4px;padding:0 6px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.tag.ok{background:var(--okw);color:var(--ok)}.tag.bad{background:var(--badw);color:var(--bad)}.tag.n{background:var(--acw);color:var(--ac)}
+table{width:100%;border-collapse:collapse;background:var(--sf);border:1px solid var(--ln);border-radius:var(--r)}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--ln);vertical-align:top;font-size:14px}
+th{font-weight:600;color:var(--mu);font-size:13px}
+tr:last-child td{border-bottom:0}
+td.nm{overflow-wrap:anywhere}
+td.num,th.num{text-align:right}
+.tw{overflow-x:auto}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.row>.grow{flex:1 1 220px}
+.seg{display:inline-flex;border:1px solid var(--ln);border-radius:var(--r);overflow:hidden}
+.seg label{margin:0;padding:6px 12px;cursor:pointer;color:var(--ink);font-size:15px;background:var(--sf)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+span{font-weight:650}
+.seg label:has(input:checked){background:var(--acw);color:var(--ac)}
+.seg label:has(input:focus-visible){outline:2px solid var(--ac);outline-offset:-2px}
+.hint{font-size:13px;color:var(--mu);margin:6px 0 0}
+.hint code,code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--acw);padding:0 4px;border-radius:3px}
+.list{list-style:none;padding:0;margin:0;border:1px solid var(--ln);border-radius:var(--r);background:var(--sf)}
+.list li{display:flex;gap:10px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--ln)}
+.list li:last-child{border-bottom:0}
+.list li .nm{flex:1;overflow-wrap:anywhere}
+.empty{padding:10px;color:var(--mu)}
+.result{margin-top:10px;padding:10px 12px;border-left:3px solid var(--ln);background:var(--sf);border-radius:0 var(--r) var(--r) 0}
+.result.bad{border-left-color:var(--bad)}.result.ok{border-left-color:var(--ok)}.result.n{border-left-color:var(--ac)}
+.result b{display:block}
+.banner{padding:10px 12px;border-radius:var(--r);background:var(--warnw);color:var(--warn);margin:14px 0}
+.panel{max-width:420px;margin:60px auto;background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:22px}
+.panel h2{margin-top:0;font-size:18px}
+.panel .btn{margin-top:12px}
+.err{color:var(--bad);font-size:14px;min-height:1.5em;margin:8px 0 0}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.toolbar input[type=text]{max-width:280px}
+.chk{display:inline-flex;gap:6px;align-items:center;margin:0;color:var(--ink);font-size:14px}
+.form{display:grid;gap:12px;max-width:520px}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:calc(100% - 32px);background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:var(--r);font-size:14px;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+#toast.e{background:var(--bad);color:#fff}
+[hidden]{display:none!important}
+#recs{margin-top:10px}td.nm a{cursor:pointer}.mt{margin-top:8px}
+@media (prefers-reduced-motion:no-preference){.meter i{transition:width .3s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>C3-DNS</h1><span class="host" id="host"></span><span class="sp"></span><button class="btn sm" id="out" hidden>Sign out</button></header>
+
+<section id="login" class="panel" hidden>
+<h2>Sign in</h2>
+<p class="mu small">User <b>admin</b>, with the password you set in the setup portal.</p>
+<form id="lf"><label for="lpw">Admin password</label><input type="password" id="lpw" autocomplete="current-password" required>
+<p class="err" id="lerr" role="alert"></p><button class="btn pri" type="submit">Sign in</button></form>
+</section>
+
+<section id="nopw" class="panel" hidden>
+<h2>Set an admin password first</h2>
+<p>This device has no admin password, so the dashboard stays locked.</p>
+<p>Hold the <b>BOOT</b> button for 5 seconds. The device restarts into its setup portal: join the Wi-Fi network <b>C3-DNS-…</b>, open <b>http://192.168.4.1/</b>, enter your Wi-Fi details and choose an admin password.</p>
+<button class="btn" id="retry">Check again</button>
+</section>
+
+<div id="app" hidden>
+<nav role="tablist" id="tabs">
+<button role="tab" data-t="ov" aria-selected="true">Overview</button>
+<button role="tab" data-t="log" aria-selected="false">Log</button>
+<button role="tab" data-t="cl" aria-selected="false">Clients</button>
+<button role="tab" data-t="ru" aria-selected="false">Rules</button>
+<button role="tab" data-t="se" aria-selected="false">Settings</button>
+</nav>
+<div id="warn" class="banner" role="status" hidden></div>
+
+<section data-p="ov">
+<div class="state" id="state"><div class="big" id="stbig"><span class="dot"></span>…</div>
+<div class="acts" id="stacts"><span class="mu small">Pause blocking</span>
+<button class="btn" data-pause="30">30 s</button><button class="btn" data-pause="300">5 min</button><button class="btn" data-pause="1800">30 min</button>
+<button class="btn pri" data-pause="0" id="resume" hidden>Resume blocking</button></div></div>
+<div class="stats" id="stats"></div>
+<p class="small" id="budget"></p><div class="meter" id="bmeter"><i></i></div>
+<div class="cols">
+<div><h2>Top allowed</h2><ol class="rank" id="topq"></ol></div>
+<div><h2>Top blocked</h2><ol class="rank bad" id="topb"></ol></div>
+</div>
+</section>
+
+<section data-p="log" hidden>
+<div class="toolbar"><input type="text" id="lfilter" placeholder="Filter by name or client" aria-label="Filter the log">
+<label class="chk"><input type="checkbox" id="lblk">Blocked only</label><span class="mu small" id="lcount"></span></div>
+<div class="tw"><table><thead><tr><th>When</th><th>Client</th><th>Name</th><th>Type</th><th>Result</th></tr></thead><tbody id="logb"></tbody></table></div>
+</section>
+
+<section data-p="cl" hidden>
+<p class="mu small">Counts since midnight UTC (or since the device started). A banned client gets no answers at all.</p>
+<div class="tw"><table><thead><tr><th>Client</th><th class="num">Allowed</th><th class="num">Blocked</th><th></th></tr></thead><tbody id="clb"></tbody></table></div>
+</section>
+
+<section data-p="ru" hidden>
+<h2>Look up a domain</h2>
+<form class="row" id="luf"><div class="grow"><label for="lud">Domain</label><input type="text" id="lud" placeholder="ads.example.com" autocapitalize="off" spellcheck="false"></div><button class="btn" type="submit">Look up</button></form>
+<div id="lures"></div>
+
+<h2>Add domain</h2>
+<form id="rf"><div class="row"><div class="grow"><label for="rp">Domain or pattern</label><input type="text" id="rp" placeholder="ads.example.com" autocapitalize="off" spellcheck="false" required></div>
+<div class="seg" role="radiogroup" aria-label="Action"><label><input type="radio" name="rk" value="block" checked><span>Block</span></label><label><input type="radio" name="rk" value="allow"><span>Allow</span></label></div>
+<button class="btn pri" type="submit">Add</button></div>
+<p class="hint"><code>example.com</code> matches that name only. <code>||example.com^</code> matches it and every subdomain. <code>*.ads.*</code> is a wildcard (<code>*</code> spans dots). Allow always wins over block.</p></form>
+<p class="small" id="rbudget"></p>
+<div class="cols"><div><h2>Blocked by you</h2><ul class="list" id="rblock"></ul></div><div><h2>Allowed by you</h2><ul class="list" id="rallow"></ul></div></div>
+
+<h2>Local names</h2>
+<form class="row" id="recf"><div class="grow"><label for="recn">Name</label><input type="text" id="recn" placeholder="nas.home" autocapitalize="off" spellcheck="false" required></div>
+<div class="grow"><label for="reci">Addresses (comma separated)</label><input type="text" id="reci" placeholder="192.0.2.20, fd00::20" required></div><button class="btn pri" type="submit">Add name</button></form>
+<p class="hint" id="ownname"></p>
+<ul class="list" id="recs"></ul>
+</section>
+
+<section data-p="se" hidden>
+<form class="form" id="sf">
+<div><label for="sup">Upstream DNS servers (comma separated, 1 to 8, at least one IPv4)</label><textarea id="sup" rows="2" spellcheck="false"></textarea></div>
+<div class="row"><div class="grow"><label for="sb">Per-client burst</label><input type="number" id="sb" min="1" max="1000"></div><div class="grow"><label for="sr">Per-client queries per second</label><input type="number" id="sr" min="1" max="1000"></div></div>
+<div><label for="sn">Local name of this device</label><input type="text" id="sn" autocapitalize="off" spellcheck="false"><p class="hint">Must end in .home, .lan, .internal or .home.arpa. adblock.local also works, through mDNS.</p></div>
+<div><button class="btn pri" type="submit">Save settings</button></div>
+</form>
+<h2>Change admin password</h2>
+<form class="form" id="pf">
+<div><label for="po">Current password</label><input type="password" id="po" autocomplete="current-password" required></div>
+<div><label for="pn">New password (12 to 128 characters)</label><input type="password" id="pn" autocomplete="new-password" minlength="12" maxlength="128" required></div>
+<div><label for="pr">New password again</label><input type="password" id="pr" autocomplete="new-password" required></div>
+<div><button class="btn pri" type="submit">Change password</button></div>
+</form>
+<h2>Device</h2><p class="small mu" id="dev"></p>
+</section>
+</div>
+</div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="c3auth";
+let auth=null,authed=false,tab="ov",ov=null,timer=null,tick=null,pausedUntil=0,q=Promise.resolve();
+try{auth=sessionStorage.getItem(KEY)}catch(e){}
+function el(t,a,...kids){const e=document.createElement(t);if(a)for(const k in a){if(k==="cls")e.className=a[k];else if(k.startsWith("on"))e.addEventListener(k.slice(2),a[k]);else e.setAttribute(k,a[k])}for(const c of kids)if(c!=null)e.append(c instanceof Node?c:String(c));return e}
+function fill(p,...kids){p.replaceChildren(...kids)}
+const fmt=n=>Number(n).toLocaleString();
+function dur(s){s=Math.max(0,Math.round(s));const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;return d?d+" d "+h+" h":h?h+" h "+m+" min":m?m+" min "+(x?x+" s":""):x+" s"}
+function clock(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+const kb=b=>(b/1024).toFixed(1)+" KB";
+function toast(msg,err){const t=$("toast");t.textContent=msg;t.className=err?"e":"";t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,err?7000:3500)}
+function b64(s){const b=new TextEncoder().encode(s);let r="";for(const c of b)r+=String.fromCharCode(c);return btoa(r)}
+class ApiErr extends Error{constructor(m,st,code){super(m);this.st=st;this.code=code}}
+// One request at a time: the device keeps at most 2 connections and closes the oldest for a 3rd.
+function api(path,body){const run=async()=>{const h={"X-Requested-With":"c3-dns"};if(auth)h.Authorization=auth;const o={headers:h,cache:"no-store"};if(body!==undefined){o.method="POST";h["Content-Type"]="application/json";o.body=JSON.stringify(body)}
+let r;try{r=await fetch(path,o)}catch(e){throw new ApiErr("The device did not answer. Is it on the network?",0,"net")}
+let j=null;try{j=await r.json()}catch(e){}
+if(r.status===401)authed=false;else if(r.ok)authed=true;
+if(!r.ok)throw new ApiErr(j&&j.error?j.error:"Request failed ("+r.status+").",r.status,j&&j.code);return j};const p=q.then(run,run);q=p.catch(()=>{});return p}
+function show(which){for(const id of["login","nopw","app"])$(id).hidden=id!==which;$("out").hidden=which!=="app"}
+function handle(e){if(e.st===401){auth=null;try{sessionStorage.removeItem(KEY)}catch(x){}show("login");return}if(e.code==="no_password"){show("nopw");return}toast(e.message,true)}
+async function post(path,body,ok){try{const r=await api(path,body);if(ok)toast(ok);await refresh();return r}catch(e){handle(e);return null}}
+
+function renderState(){const big=$("stbig"),left=(pausedUntil-Date.now())/1000,paused=left>0;$("state").classList.toggle("paused",paused);
+fill(big,el("span",{cls:"dot"}),paused?"Paused, "+clock(left)+" left":"Blocking is on");$("resume").hidden=!paused;
+for(const b of $("stacts").querySelectorAll("[data-pause]:not([data-pause='0'])"))b.hidden=paused;$("stacts").firstElementChild.hidden=paused}
+function rank(ol,items,bad){if(!items.length){fill(ol,el("li",{cls:"empty"},bad?"Nothing blocked yet.":"No queries yet."));return}const max=items[0].count||1;
+fill(ol,...items.map(i=>{const bar=el("span",{cls:"bar"});bar.style.width=Math.max(2,100*i.count/max)+"%";return el("li",null,el("a",{tabindex:"0",title:"Look up "+i.name,onclick:()=>lookupGo(i.name),onkeydown:e=>{if(e.key==="Enter")lookupGo(i.name)}},i.name),el("span",{cls:"mu"},fmt(i.count)),bar)}))}
+function stat(v,l,c){return el("div",null,el("b",c?{cls:c}:null,v),el("span",null,l))}
+function renderOv(){const o=ov,tot=o.allowed+o.blocked;fill($("stats"),stat(fmt(o.allowed),"✓ allowed","v-ok"),stat(fmt(o.blocked),"✕ blocked"+(tot?" ("+(100*o.blocked/tot).toFixed(1)+" %)":""),"v-bad"),
+stat(fmt(o.clients),"clients today"),stat(fmt(o.list_size),"names in the common list"),
+stat(kb(o.heap_free),"free memory (lowest "+kb(o.heap_min)+")"),stat(dur(o.uptime),"up since restart"));
+const w=o.owner,pct=Math.min(100,100*w.used/w.budget),txt="Your rules: "+w.entries+(w.entries===1?" entry, ":" entries, ")+kb(w.used)+" of "+kb(w.budget)+" used ("+w.rules+" rules, "+w.records+" local names, "+w.bans+" bans).";
+$("budget").textContent=txt;$("rbudget").textContent=txt;$("bmeter").firstElementChild.style.width=pct+"%";$("bmeter").classList.toggle("full",pct>=95);
+const warn=[];if(o.warning)warn.push(o.warning);if(o.save&&o.save.read_only)warn.push("Storage is read-only: changes are not saved.");$("warn").textContent=warn.join(" ");$("warn").hidden=!warn.length;
+$("host").textContent=o.local_name;$("dev").textContent="Up "+dur(o.uptime)+(o.time?", clock "+o.time.replace("T"," ").replace("Z"," UTC"):", clock not set yet")+". Log keeps the last "+o.log_cap+" queries. "+(o.save?(o.save.last?"Last saved "+o.save.last.replace("T"," ").replace("Z"," UTC")+".":"Not saved yet this boot.")+(o.save.dirty?" Changes are saved within 10 minutes.":""):"")}
+
+function ago(now,t){const s=now-t;return s<5?"now":dur(s)+" ago"}
+let logData=null;
+function renderLog(){if(!logData)return;const f=$("lfilter").value.trim().toLowerCase(),bo=$("lblk").checked;const rows=logData.items.filter(i=>(!bo||i.blocked)&&(!f||i.name.includes(f)||i.client.includes(f)));
+$("lcount").textContent=rows.length+" of "+logData.items.length+" (last "+logData.cap+" kept)";
+if(!rows.length){fill($("logb"),el("tr",null,el("td",{colspan:"5",cls:"mu"},logData.items.length?"No entries match.":"No queries logged yet.")));return}
+fill($("logb"),...rows.map(i=>el("tr",null,el("td",{cls:"mu"},ago(logData.now,i.t)),el("td",null,i.client),el("td",{cls:"nm"},el("a",{tabindex:"0",onclick:()=>lookupGo(i.name)},i.name)),el("td",null,i.type),
+el("td",null,el("span",{cls:"tag "+(i.blocked?"bad":"ok")},i.blocked?"✕ Blocked":"✓ Allowed")," ",el("span",{cls:"mu small"},i.reason)))))}
+
+function renderClients(c){const banned=new Set(c.banned),rows=c.items.map(x=>x);for(const b of c.banned)if(!rows.some(r=>r.client===b))rows.push({client:b,allowed:0,blocked:0,banned:true});
+if(!rows.length){fill($("clb"),el("tr",null,el("td",{colspan:"4",cls:"mu"},"No clients seen yet.")));return}
+fill($("clb"),...rows.map(r=>{const isB=banned.has(r.client);return el("tr",null,el("td",{cls:"nm"},r.client," ",isB?el("span",{cls:"tag bad"},"Banned"):null),el("td",{cls:"num"},fmt(r.allowed)),el("td",{cls:"num"},fmt(r.blocked)),
+el("td",{cls:"num"},el("button",{cls:"btn sm"+(isB?"":" dng"),onclick:()=>{if(isB||confirm("Ban "+r.client+"? It will get no DNS answers until you unban it."))post("/api/ban",{op:isB?"unban":"ban",client:r.client},isB?"Unbanned "+r.client:"Banned "+r.client)}},isB?"Unban":"Ban")))}))}
+
+function item(text,btn,fn){return el("li",null,el("span",{cls:"nm"},text),el("button",{cls:"btn sm",onclick:fn},btn))}
+function renderRules(r){for(const k of["block","allow"]){const l=r.rules.filter(x=>x.kind===k),ul=$("r"+k);
+if(!l.length)fill(ul,el("li",{cls:"empty"},k==="block"?"No domains blocked by you yet.":"No domains allowed by you yet."));
+else fill(ul,...l.map(x=>item(x.pattern,"Remove",()=>post("/api/rules",{op:"remove",kind:k,pattern:x.pattern},"Removed "+x.pattern))))}
+if(!r.records.length)fill($("recs"),el("li",{cls:"empty"},"No local names yet."));
+else fill($("recs"),...r.records.map(x=>item(x.name+"  →  "+x.ips.join(", "),"Remove",()=>post("/api/records",{op:"remove",name:x.name},"Removed "+x.name))));
+$("ownname").textContent=r.own?"This device answers "+r.own.name+" with "+r.own.ips.join(", ")+".":""}
+
+function lookupGo(d){$("lud").value=d;go("ru");lookup()}
+async function lookup(){const d=$("lud").value.trim();if(!d)return;let r;try{r=await api("/api/lookup?d="+encodeURIComponent(d))}catch(e){handle(e);return}
+let cls="n",head,why="";
+if(r.action==="block"&&r.source==="rule"){cls="bad";head="✕ Blocked by your rule";why=r.rule}
+else if(r.action==="block"){cls="bad";head="✕ Blocked by the common list";why=r.matched===r.name?"listed as "+r.matched:"listed parent domain: "+r.matched}
+else if(r.action==="allow"){cls="ok";head="✓ Allowed by your rule";why=r.rule+" (allow wins over any block)"}
+else if(r.source==="own"){head="Answered by this device (its own name)"}
+else if(r.action==="local"){head="Answered locally (your local name)"}
+else if(r.last&&r.last.cname&&r.last.blocked){cls="bad";head="✕ Blocked through its CNAME chain";why=r.last.reason.replace(/^cname /,"via ")}
+else{cls="ok";head="✓ Not blocked";why="No rule of yours matches and it is not in the common list."}
+const kids=[el("b",null,head+": "+r.name)];if(why)kids.push(el("span",{cls:"small"},why));
+if(r.last)kids.push(el("div",{cls:"small mu"},"Last queried "+(r.now-r.last.t<5?"just now":ago(r.now,r.last.t))+": "+(r.last.blocked?"blocked":"allowed")+" ("+r.last.reason+")."));
+const box=el("div",{cls:"result "+cls},...kids);
+if(r.action!=="local"){const k=r.action==="block"?"allow":"block";box.append(el("div",{cls:"mt"},el("button",{cls:"btn sm",onclick:()=>{$("rp").value=r.name;document.querySelector("input[name=rk][value="+k+"]").checked=true;$("rp").focus()}},k==="allow"?"Allow this domain…":"Block this domain…")))}
+fill($("lures"),box)}
+
+let setFilled=false;
+function fillSettings(s){if(setFilled)return;setFilled=true;$("sup").value=s.upstreams.join(", ");$("sb").value=s.rate_burst;$("sr").value=s.rate_per_sec;$("sn").value=s.local_name}
+
+async function refresh(){if(document.hidden||!authed)return;try{ov=await api("/api/overview");pausedUntil=Date.now()+ov.paused_for*1000;show("app");renderOv();renderState();
+if(tab==="ov"){const a=await api("/api/top?kind=queried&n=15"),b=await api("/api/top?kind=blocked&n=15");rank($("topq"),a.items,false);rank($("topb"),b.items,true)}
+else if(tab==="log"){logData=await api("/api/log?n=500");renderLog()}
+else if(tab==="cl")renderClients(await api("/api/clients"));
+else if(tab==="ru")renderRules(await api("/api/rules"));
+else if(tab==="se"&&ov.settings)fillSettings(ov.settings)}catch(e){handle(e)}}
+function schedule(){clearInterval(timer);timer=setInterval(refresh,5000)}
+function go(t){tab=t;for(const b of $("tabs").children)b.setAttribute("aria-selected",b.dataset.t===t);for(const s of document.querySelectorAll("[data-p]"))s.hidden=s.dataset.p!==t;if(t==="se")setFilled=false;refresh();schedule()}
+
+$("tabs").addEventListener("click",e=>{const t=e.target.closest("[data-t]");if(t)go(t.dataset.t)});
+$("tabs").addEventListener("keydown",e=>{if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;const bs=[...$("tabs").children],i=bs.indexOf(document.activeElement);if(i<0)return;const n=bs[(i+(e.key==="ArrowRight"?1:bs.length-1))%bs.length];n.focus();go(n.dataset.t)});
+$("stacts").addEventListener("click",e=>{const b=e.target.closest("[data-pause]");if(!b)return;const s=+b.dataset.pause;post("/api/pause",{secs:s},s?"Blocking paused for "+dur(s):"Blocking resumed")});
+$("lfilter").addEventListener("input",renderLog);$("lblk").addEventListener("change",renderLog);
+$("luf").addEventListener("submit",e=>{e.preventDefault();lookup()});
+$("rf").addEventListener("submit",async e=>{e.preventDefault();const k=document.querySelector("input[name=rk]:checked").value,p=$("rp").value.trim();const r=await post("/api/rules",{op:"add",kind:k,pattern:p},(k==="block"?"Blocking ":"Allowing ")+p);if(r){$("rp").value="";if($("lud").value)lookup()}});
+$("recf").addEventListener("submit",async e=>{e.preventDefault();const ips=$("reci").value.split(/[\s,]+/).filter(Boolean);const r=await post("/api/records",{op:"add",name:$("recn").value.trim(),ips},"Saved "+$("recn").value.trim());if(r){$("recn").value="";$("reci").value=""}});
+$("sf").addEventListener("submit",async e=>{e.preventDefault();const s=ov&&ov.settings||{},b={},ups=$("sup").value.split(/[\s,]+/).filter(Boolean);
+if(ups.join()!==(s.upstreams||[]).join())b.upstreams=ups;const rb=+$("sb").value,rr=+$("sr").value,n=$("sn").value.trim();if(rb!==s.rate_burst)b.rate_burst=rb;if(rr!==s.rate_per_sec)b.rate_per_sec=rr;if(n!==s.local_name)b.local_name=n;
+if(!Object.keys(b).length){toast("Nothing changed.");return}const r=await post("/api/settings",b,"Settings saved");if(r){setFilled=false;refresh()}});
+$("pf").addEventListener("submit",async e=>{e.preventDefault();if($("pn").value!==$("pr").value){toast("The new passwords do not match.",true);return}toast("Checking… this takes a few seconds.");
+const nw=$("pn").value;try{await api("/api/password",{old:$("po").value,new:nw});auth="Basic "+b64("admin:"+nw);try{sessionStorage.setItem(KEY,auth)}catch(x){}$("pf").reset();toast("Password changed")}catch(x){handle(x)}});
+$("lf").addEventListener("submit",async e=>{e.preventDefault();$("lerr").textContent="Checking…";const a="Basic "+b64("admin:"+$("lpw").value);
+try{auth=a;await api("/api/overview");try{sessionStorage.setItem(KEY,a)}catch(x){}$("lpw").value="";$("lerr").textContent="";go(tab)}catch(x){auth=null;if(x.code==="no_password")show("nopw");else $("lerr").textContent=x.st===401?"Wrong password.":x.message}});
+$("out").addEventListener("click",()=>{auth=null;authed=false;try{sessionStorage.removeItem(KEY)}catch(x){}show("login")});
+function start(){let h="";try{h=decodeURIComponent(location.hash.slice(1))}catch(e){}if(h.startsWith("lookup=")){lookupGo(h.slice(7));return}go(["ov","log","cl","ru","se"].includes(h)?h:tab)}
+function probe(){api("/api/overview").then(start,e=>{if(e.code==="no_password")show("nopw");else if(e.st===401)show("login");else toast(e.message,true)})}
+$("retry").addEventListener("click",probe);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
+tick=setInterval(()=>{if(pausedUntil&&!document.hidden)renderState()},1000);
+probe();
+schedule();
+</script>
+</body>
+</html>

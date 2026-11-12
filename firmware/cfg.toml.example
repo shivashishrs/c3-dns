@@ -1,0 +1,4 @@
+# Copy to cfg.toml (gitignored) and fill in. Never commit cfg.toml.
+[firmware]
+wifi_ssid = "your-ssid"
+wifi_psk = "your-wifi-password"

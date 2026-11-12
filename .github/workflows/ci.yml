@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host:
+    name: dnscore + tool tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: dnscore
+      - name: dnscore tests
+        working-directory: dnscore
+        run: cargo test --locked
+      - name: Flash-guard tests (stubbed USB, never touches a board)
+        run: bash tools/test-guard.sh
+
+  firmware:
+    name: firmware build (ESP32-C3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/esp-toolchain
+      - name: Build
+        working-directory: firmware
+        run: |
+          . ~/export-esp.sh
+          cargo build --release --locked
+      - name: Flash budget (app partition is 1.5 MB)
+        run: |
+          espflash save-image --chip esp32c3 --partition-table firmware/partitions.csv \
+            firmware/target/riscv32imc-esp-espidf/release/firmware app.bin
+          size=$(wc -c < app.bin)
+          echo "app image: $size bytes ($(( size * 100 / 0x180000 ))% of 0x180000)" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "$size" -le $((0x180000)) ]

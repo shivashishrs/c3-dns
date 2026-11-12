@@ -1,0 +1,39 @@
+name: ESP32-C3 Rust toolchain
+description: Installs the espup `esp` Rust toolchain, ldproxy and espflash, with ESP-IDF cached.
+
+runs:
+  using: composite
+  steps:
+    - name: System packages
+      shell: bash
+      run: sudo apt-get update -qq && sudo apt-get install -y -qq libudev-dev ninja-build cmake
+    - uses: dtolnay/rust-toolchain@stable
+    - name: Cache esp toolchain, tools and ESP-IDF
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.rustup/toolchains/esp
+          ~/export-esp.sh
+          ~/.cargo/bin/ldproxy
+          ~/.cargo/bin/espflash
+          firmware/.embuild
+        key: esp-${{ runner.os }}-rust1.97.0.0-espflash4.6.0-${{ hashFiles('firmware/.cargo/config.toml', 'firmware/sdkconfig.defaults', 'firmware/Cargo.lock', 'firmware/components_esp32c3.lock') }}
+        restore-keys: |
+          esp-${{ runner.os }}-rust1.97.0.0-espflash4.6.0-
+    - name: Install toolchain (versions as in firmware/rust-toolchain.toml and the README)
+      shell: bash
+      run: |
+        set -eu
+        if [ ! -d ~/.rustup/toolchains/esp ] || [ ! -f ~/export-esp.sh ]; then
+          curl -fsSL -o /tmp/espup https://github.com/esp-rs/espup/releases/download/v0.17.1/espup-x86_64-unknown-linux-gnu
+          chmod +x /tmp/espup
+          # The `esp` toolchain is only installed for an Xtensa target, so name esp32 too.
+          /tmp/espup install --targets esp32,esp32c3 --std --toolchain-version 1.97.0.0
+        fi
+        command -v ldproxy >/dev/null || cargo install ldproxy --locked --version 0.3.5
+        if ! command -v espflash >/dev/null; then
+          curl -fsSL -o /tmp/espflash.zip https://github.com/esp-rs/espflash/releases/download/v4.6.0/espflash-x86_64-unknown-linux-gnu.zip
+          unzip -o -q /tmp/espflash.zip -d ~/.cargo/bin
+          chmod +x ~/.cargo/bin/espflash
+        fi
+        rustup toolchain list

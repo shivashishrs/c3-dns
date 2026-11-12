@@ -1,0 +1,5 @@
+[toolchain]
+# The espup-installed `esp` toolchain (1.97.0.0, nightly-capable, has rust-src).
+# Plain `nightly` (2026-10-25) fails to build std for riscv32imc-esp-espidf:
+# its std still reads stat.st_*time but the libc it pins (0.2.191) renamed them to st_*tim.
+channel = "esp"
