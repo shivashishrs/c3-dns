@@ -108,7 +108,7 @@ JSON
   echo "blocklist.bin holds 40-bit hashes of the domains in:"
   for s in $sources; do echo "  $s"; done
   echo "built $(date -u +%Y-%m-%dT%H:%MZ):"
-  sed -e 's/^/  /' -e 's/ -> .*//' "$work/blocklist.txt"
+  sed -e 's/^/  /' -e 's| -> /.*||' "$work/blocklist.txt"
   echo
   echo "StevenBlack/hosts is MIT licensed: https://github.com/StevenBlack/hosts/blob/master/license.txt"
   echo "If you build an image from other lists, their licences apply to that image."

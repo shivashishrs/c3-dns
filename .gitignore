@@ -7,3 +7,5 @@ tools/board.env
 soak-*.csv
 dist/
 .DS_Store
+.idea/
+.vscode/
