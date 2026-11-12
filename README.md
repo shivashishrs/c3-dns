@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo-mark-dark.svg">
+    <img src="docs/images/logo-mark.svg" alt="C3-DNS logo: a chip with a grid of entries, one crossed out" width="112">
+  </picture>
+</p>
+
 # C3-DNS
 
 **A network-wide ad blocker on a $3 ESP32-C3, written in Rust.** No Raspberry Pi, no SD card,

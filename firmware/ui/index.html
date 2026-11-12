@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="data:,">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='6' y='6' width='88' height='88' rx='20' fill='%2312241B'/%3E%3Cg fill='%23E8F5EC'%3E%3Ccircle cx='29' cy='29' r='8'/%3E%3Ccircle cx='50' cy='29' r='8'/%3E%3Ccircle cx='71' cy='29' r='8'/%3E%3Ccircle cx='29' cy='50' r='8'/%3E%3Ccircle cx='50' cy='50' r='8'/%3E%3Ccircle cx='71' cy='50' r='8'/%3E%3Ccircle cx='29' cy='71' r='8'/%3E%3Ccircle cx='50' cy='71' r='8'/%3E%3C/g%3E%3Cpath d='M63 63L79 79M79 63L63 79' stroke='%23FF7A1A' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
 <title>C3-DNS</title>
 <style>
 :root{--bg:#f3f5f3;--sf:#fff;--ink:#1d2320;--mu:#5c6661;--ln:#d8ddd9;--ac:#17647f;--acw:#e3eff3;--ok:#2b7a4b;--okw:#e4f2e9;--bad:#b0271f;--badw:#fbe8e6;--warn:#8a5a00;--warnw:#fff3d6;--r:6px}
@@ -13,8 +13,10 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
 .wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
-header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 0 6px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 0 6px}
 header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.01em}
+header h1{display:flex;align-items:center;gap:8px}
+.logo{width:22px;height:22px;flex:none}.logo .c{fill:var(--ink)}.logo .d{fill:var(--sf)}.logo .x{fill:none;stroke:#f07a1f;stroke-width:8;stroke-linecap:round}
 header .host{color:var(--mu);font-size:14px}
 header .sp{flex:1}
 nav{display:flex;gap:2px;border-bottom:1px solid var(--ln);overflow-x:auto;margin-bottom:22px}
@@ -98,7 +100,7 @@ td.num,th.num{text-align:right}
 </head>
 <body>
 <div class="wrap">
-<header><h1>C3-DNS</h1><span class="host" id="host"></span><span class="sp"></span><button class="btn sm" id="out" hidden>Sign out</button></header>
+<header><h1><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect class="c" x="6" y="6" width="88" height="88" rx="20"/><circle class="d" cx="29" cy="29" r="8"/><circle class="d" cx="50" cy="29" r="8"/><circle class="d" cx="71" cy="29" r="8"/><circle class="d" cx="29" cy="50" r="8"/><circle class="d" cx="50" cy="50" r="8"/><circle class="d" cx="71" cy="50" r="8"/><circle class="d" cx="29" cy="71" r="8"/><circle class="d" cx="50" cy="71" r="8"/><path class="x" d="M63 63L79 79M79 63L63 79"/></svg>C3-DNS</h1><span class="host" id="host"></span><span class="sp"></span><button class="btn sm" id="out" hidden>Sign out</button></header>
 
 <section id="login" class="panel" hidden>
 <h2>Sign in</h2>
